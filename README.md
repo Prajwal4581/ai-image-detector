@@ -1,10 +1,9 @@
 # 🔍 AI Image Detector
 
-Detects whether an uploaded image is **AI-generated or real** using:
-- **Hive AI API** — detection model
-- **LangChain + OpenAI** — explanation agent
-- **FastAPI** — backend API
-- **Streamlit** — frontend UI
+An AI-powered web app that detects whether an uploaded image is **AI-generated or real**, with intelligent explanation of the verdict.
+
+## 🌐 Live Demo
+> Run locally following setup instructions below
 
 ---
 
@@ -17,65 +16,112 @@ Streamlit Frontend (frontend/streamlit_app.py)
       ↓ HTTP POST /detect
 FastAPI Backend (app/main.py)
       ↓
-Hive AI API → detection score
+Sightengine API → AI detection score
       ↓
-LangChain Agent → human-readable explanation
+Groq LLaMA3 → human-readable explanation
       ↓
-JSON Response back to UI
+JSON Response → displayed on UI
 ```
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend API | FastAPI + Uvicorn |
+| AI Detection Model | Sightengine API |
+| AI Explanation Agent | Groq API (LLaMA3-8b) |
+| Frontend UI | Streamlit |
+| Containerization | Docker |
+
+---
+
+## ✨ Features
+
+- Upload JPG, PNG, or WEBP images
+- Instant AI vs Real verdict with confidence score
+- AI-powered explanation of WHY the image was flagged
+- Clean progress bar showing AI generation probability
+- Error handling and file size validation
+- REST API with auto-generated Swagger docs
 
 ---
 
 ## 🚀 Setup & Run
 
-### 1. Clone and install dependencies
+### 1. Clone the repo
 ```bash
-git clone <your-repo-url>
-cd ai-detector
+git clone https://github.com/Prajwal4581/ai-image-detector.git
+cd ai-image-detector
+```
+
+### 2. Create virtual environment
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Mac/Linux
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Set up API keys
+### 4. Set up API keys
 ```bash
 cp .env.example .env
-# Edit .env and add your API keys
+# Edit .env and add your keys
 ```
 
-Get your keys:
-- OpenAI API key: https://platform.openai.com/api-keys
-- Hive API key: https://thehive.ai (free tier available)
+Get your free API keys:
+- Groq API key → https://console.groq.com
+- Sightengine keys → https://sightengine.com
 
-### 3. Run FastAPI backend
+Your `.env` should look like:
+```
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxx
+SIGHTENGINE_USER=your_user_id
+SIGHTENGINE_SECRET=your_secret
+```
+
+### 5. Run FastAPI backend
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
 
-### 4. Run Streamlit frontend (new terminal)
+### 6. Run Streamlit frontend (new terminal)
 ```bash
+venv\Scripts\activate
 streamlit run frontend/streamlit_app.py
 ```
 
-### 5. Open browser
-- Frontend: http://localhost:8501
-- API Docs: http://localhost:8000/docs  ← FastAPI auto-generates this!
+### 7. Open browser
+- Frontend → http://localhost:8501
+- API Docs → http://localhost:8000/docs
 
 ---
 
-## 🐳 Run with Docker
+## 🐳 Docker
 ```bash
-docker build -t ai-detector .
-docker run -p 8000:8000 --env-file .env ai-detector
+docker build -t ai-image-detector .
+docker run -p 8000:8000 --env-file .env ai-image-detector
 ```
 
 ---
 
 ## 📁 Project Structure
 ```
-ai-detector/
+ai-image-detector/
 ├── app/
-│   ├── main.py          # FastAPI routes
-│   ├── detector.py      # Hive AI API integration
-│   └── agent.py         # LangChain explanation agent
+│   ├── __init__.py
+│   ├── main.py          # FastAPI routes + validation
+│   ├── detector.py      # Sightengine API integration
+│   └── agent.py         # Groq LLaMA3 explanation agent
 ├── frontend/
 │   └── streamlit_app.py # Streamlit UI
 ├── requirements.txt
@@ -86,21 +132,18 @@ ai-detector/
 
 ---
 
-## 🛠️ Tech Stack
-| Layer | Technology |
-|---|---|
-| Backend API | FastAPI |
-| AI Detection Model | Hive AI API |
-| AI Agent / Explanation | LangChain + OpenAI GPT-3.5 |
-| Frontend | Streamlit |
-| Containerization | Docker |
+## 📸 Sample Results
+
+| Image Type | Verdict | Confidence |
+|---|---|---|
+| Real photo | ✅ Real / Authentic | 99% |
+| AI generated (Midjourney/DALL-E) | 🤖 AI Generated | 99% |
 
 ---
 
 ## 🔮 Future Improvements
-- [ ] Add video/deepfake detection support
+- [ ] Video / deepfake detection
 - [ ] Batch image processing
-- [ ] Detection history with database storage
-- [ ] Confidence threshold configuration
-- [ ] Support for more file formats
-```
+- [ ] Detection history with database
+- [ ] Deploy on Render with live URL
+- [ ] Add more detection models for ensemble voting
